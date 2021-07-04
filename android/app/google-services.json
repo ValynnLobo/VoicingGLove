@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "549786110482",
+    "project_id": "voicingglove",
+    "storage_bucket": "voicingglove.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:549786110482:android:d5eb0e49029d3798aee6cb",
+        "android_client_info": {
+          "package_name": "com.example.mevoicingglove"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "549786110482-vrggfulba50b3idtgl10gcpdq0m1lsj7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYHN2GdnbVJXPqxIv8T6XspHOMEk84Jps"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "549786110482-vrggfulba50b3idtgl10gcpdq0m1lsj7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
