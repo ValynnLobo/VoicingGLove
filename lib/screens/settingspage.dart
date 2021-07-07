@@ -40,6 +40,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   signOut() async {
     _auth.signOut();
+    Navigator.pushReplacementNamed(context, '/main');
   }
 
   @override

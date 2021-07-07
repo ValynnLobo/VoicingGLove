@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mevoicingglove/constants/cards.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:mevoicingglove/constants/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mevoicingglove/authentication/database.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key key}) : super(key: key);
@@ -14,10 +16,12 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   //Code
   final _auth = FirebaseAuth.instance;
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String name;
   String email;
   String password;
+  String uid;
 
   checkAuthentication() async {
     _auth.authStateChanges().listen((user) async {
@@ -40,9 +44,12 @@ class _RegisterPageState extends State<RegisterPage> {
       try {
         UserCredential user = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
+        //Call the class to create a new user with the customization fields
+        createUserData('null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null');
+
         if (user != null) {
           await _auth.currentUser.updateProfile(displayName: name);
-          Navigator.pushNamed(context, '/main');
+          Navigator.pushReplacementNamed(context, '/main');
           final snackBar = SnackBar(content: Text("Registered"));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }

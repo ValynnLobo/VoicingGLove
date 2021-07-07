@@ -4,6 +4,7 @@ import 'package:mevoicingglove/constants/cards.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'dart:collection';
+import 'package:mevoicingglove/authentication/database.dart';
 
 class CustomisationPage extends StatefulWidget {
   @override
@@ -11,8 +12,17 @@ class CustomisationPage extends StatefulWidget {
 }
 
 class _CustomisationPageState extends State<CustomisationPage> {
-  //Code
+  // Code to customize
   final fb = FirebaseDatabase.instance.reference();
+  String userID = "";
+  TextEditingController gest01controller = TextEditingController();
+  TextEditingController gest02controller = TextEditingController();
+  TextEditingController gest03controller = TextEditingController();
+
+  // Call the customization class
+  updateData(String gest01, String gest02, String gest03, String userID) async {
+    await updateUserData(gest01, gest02, gest03);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,16 +57,20 @@ class _CustomisationPageState extends State<CustomisationPage> {
               height: height,
               width: width,
               comboText: 'Index and Middle Finger bend',
+
               onPressed: () {
-                createDialog(context).then((value) {
-                  if (value != null) {
-                    Map<String, Object> createDoc = new HashMap();
-                    createDoc['Gest12'] = value;
-                    fb.child("Gesture").update(createDoc);
-                    final snackBar = SnackBar(content: Text('Gesture Updated'));
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  }
-                });
+                // createDialog(context).then((value) {
+                //   if (value != null) {
+                //     Map<String, Object> createDoc = new HashMap();
+                //     createDoc['Gest12'] = value;
+                //     fb.child("Gesture").update(createDoc);
+                //     final snackBar = SnackBar(content: Text('Gesture Updated'));
+                //     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                //   }
+                // });
+
+                // Call the customization class
+                openDialogueBox(context);
               },
             ), //gest12
 
@@ -501,9 +515,60 @@ class _CustomisationPageState extends State<CustomisationPage> {
       )),
     ));
   }
+
+  // Code to Customize
+  openDialogueBox(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Edit Gesture Details'),
+            content: Container(
+              height: 150,
+              child: Column(
+                children: [
+                  TextField(
+                    controller: gest01controller,
+                    decoration: InputDecoration(hintText: 'gest01'),
+                  ),
+                  TextField(
+                    controller: gest02controller,
+                    decoration: InputDecoration(hintText: 'gest02'),
+                  ),
+                  TextField(
+                    controller: gest03controller,
+                    decoration: InputDecoration(hintText: 'gest03'),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              FlatButton(
+                onPressed: () {
+                  submitAction(context);
+                  Navigator.pop(context);
+                },
+                child: Text('Submit'),
+              ),
+              FlatButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Cancel'),
+              )
+            ],
+          );
+        });
+  }
+
+  // Submit Action
+  submitAction(BuildContext context) {
+    updateData(gest01controller.text, gest02controller.text,
+        gest03controller.text, userID);
+  }
 }
 
-//Code
+// Old Code
 class ComboCard extends StatelessWidget {
   ComboCard(
       {@required this.height,
@@ -565,6 +630,7 @@ class ComboCard extends StatelessWidget {
   }
 }
 
+// Old Code
 Future<String> createDialog(BuildContext context) {
   TextEditingController ed = TextEditingController();
   return showDialog(
@@ -589,3 +655,5 @@ Future<String> createDialog(BuildContext context) {
         );
       });
 }
+
+
