@@ -4,6 +4,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:mevoicingglove/constants/cards.dart';
 import 'package:mevoicingglove/constants/constants.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Predefined_OutputScreen extends StatefulWidget {
   @override
@@ -18,6 +20,10 @@ class _Predefined_OutputScreenState extends State<Predefined_OutputScreen> {
   //Realtime Databasse
   final fb = FirebaseDatabase.instance;
   var retrievedName = "";
+  //Cloud Firestore
+  String gestToOutput = "";
+  String myGesture = "";
+  // var outputString="";
   String inputvalue = "";
   String gest01 = "gest01";
   String gest02 = "gest02";
@@ -26,7 +32,7 @@ class _Predefined_OutputScreenState extends State<Predefined_OutputScreen> {
   Future _speak() async {
     await flutterTts.setLanguage("en-IN");
     flutterTts.setPitch(1);
-    await flutterTts.speak(retrievedName);
+    await flutterTts.speak(myGesture);
   }
 
   @override
@@ -53,7 +59,7 @@ class _Predefined_OutputScreenState extends State<Predefined_OutputScreen> {
                 //   child: Text("Retrieve data"),
                 // ),
                 Text(
-                  "$retrievedName",
+                  myGesture,
                   style: comboTag,
                 ),
                 // GestureDetector(
@@ -91,6 +97,7 @@ class _Predefined_OutputScreenState extends State<Predefined_OutputScreen> {
       ref.child("inputvalue").once().then((DataSnapshot data) {
         setState(() {
           retrievedName = data.value;
+          //retrievedName='gest07';
           _checkGesture();
           _speak();
         });
@@ -98,15 +105,78 @@ class _Predefined_OutputScreenState extends State<Predefined_OutputScreen> {
     });
   }
   _checkGesture() {
-    if(retrievedName.compareTo(gest01) == true) {
-      setState(() {
-        retrievedName = "$outputName";
-      });
+    bool flag=false;
+    List<String>outputStrings=[
+      'Hello! How are you doing?',
+      'Thanks a lot',
+      'Can I get something to eat or drink',
+      'That\'s great',
+      'Yes',
+      'No',
+      'What time is it?',
+      'Excuse me',
+      'Can you please help me',
+      'How much does this cost?',
+      'Goodbye!',
+    ];
+    for(int i=1; i<=11;i++)
+    {
+      if(retrievedName == 'gest$i') {
+        setState(() {
+          flag = true;
+          myGesture = outputStrings[i-1];
+        }
+        );
+        break;
+      }
     }
-    else if(retrievedName.compareTo(gest02) == true) {
+    if(flag==false) {
+      final User = FirebaseAuth.instance.currentUser;
+      if (User != null) {
+        FirebaseFirestore.instance
+            .collection('Gestures')
+            .doc(User.uid)
+            .get()
+            .then((value) {
+          // retrievedName = "$gestToOutput";
+          // Store the data from retrievedName to myGesture
+          myGesture = value.data()[retrievedName];
+          if(myGesture == "null")
+            myGesture = "";
+          print(myGesture);
+        }).catchError((e) {
+          showError(e.message);
+          print(e);
+        });
+      }
       setState(() {
-      });
+        // flag = true;
+        // retrievedName = 'Customised code';
+
+      }
+      );
+
     }
+
+
   }
-}
+  //Check Error
+  showError(String errormessage) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('ERROR'),
+            content: Text(errormessage),
+            actions: [
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        });
+  }
 }
