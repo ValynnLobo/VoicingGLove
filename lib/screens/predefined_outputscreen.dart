@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:mevoicingglove/constants/cards.dart';
@@ -13,18 +14,26 @@ class Predefined_OutputScreen extends StatefulWidget {
 class _Predefined_OutputScreenState extends State<Predefined_OutputScreen> {
   //Flutter TTS package
   final FlutterTts flutterTts = FlutterTts();
+
   //Realtime Databasse
   final fb = FirebaseDatabase.instance;
   var retrievedName = "";
   String inputvalue = "";
+  String gest01 = "gest01";
+  String gest02 = "gest02";
+  String outputName = "Hello";
+
+  Future _speak() async {
+    await flutterTts.setLanguage("en-IN");
+    flutterTts.setPitch(1);
+    await flutterTts.speak(retrievedName);
+  }
 
   @override
   Widget build(BuildContext context) {
-    Future _speak() async {
-      await flutterTts.setLanguage("en-IN");
-      flutterTts.setPitch(1);
-      await flutterTts.speak(retrievedName);
-    }
+
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
 
     return SafeArea(
       child: Scaffold(
@@ -35,23 +44,38 @@ class _Predefined_OutputScreenState extends State<Predefined_OutputScreen> {
         ),
         body: MainCard(
           child: Center(
-            child: Row(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                RaisedButton(
-                  onPressed: _fetchGesture,
-                  // Retrieve the data from Realtime (the value of inputvalue will be retrieved and stored in retrievedName variable)
-                  child: Text("Retrieve data"),
-                ),
+                // RaisedButton(
+                //   onPressed: _fetchGesture,
+                //   // Retrieve the data from Realtime (the value of inputvalue will be retrieved and stored in retrievedName variable)
+                //   child: Text("Retrieve data"),
+                // ),
                 Text(
-                  retrievedName,
+                  "$retrievedName",
                   style: comboTag,
                 ),
-                GestureDetector(
-                  child: Icon(
-                    Icons.speaker_phone,
-                    color: Colors.white,
-                  ),
-                  onTap: _speak,
+                // GestureDetector(
+                //   child: Icon(
+                //     Icons.speaker_phone,
+                //     color: Colors.white,
+                //   ),
+                //   onTap: _speak,
+                // )
+                SizedBox(height: height*.3,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Hero(
+                      tag: 'logo',
+                      child: GestureDetector(
+                        onTap: _fetchGesture,
+                        child: Container(child:  Image.asset('images/wifi.png',height:height*0.2 ,width: width*0.2,),),
+                      ),
+                    ),
+                    SizedBox(height: height*.2,)
+                  ],
                 )
               ],
             ),
@@ -67,8 +91,22 @@ class _Predefined_OutputScreenState extends State<Predefined_OutputScreen> {
       ref.child("inputvalue").once().then((DataSnapshot data) {
         setState(() {
           retrievedName = data.value;
+          _checkGesture();
+          _speak();
         });
       });
     });
   }
+  _checkGesture() {
+    if(retrievedName.compareTo(gest01) == true) {
+      setState(() {
+        retrievedName = "$outputName";
+      });
+    }
+    else if(retrievedName.compareTo(gest02) == true) {
+      setState(() {
+      });
+    }
+  }
+}
 }
